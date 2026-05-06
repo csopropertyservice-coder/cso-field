@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+  <title>CSO Field — Trades Command Center by CSO Property Services</title>
+  <meta name="description" content="The all-in-one job management, profit tracking, and invoicing platform built for independent contractors and trade crews. No per-job fees. Ever.">
+  <meta name="theme-color" content="#1C3D2E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231C3D2E'/><text y='.9em' font-size='55' x='12'>CF</text></svg>">
+
+  <!--
+    CSO Field — index.html
+    ══════════════════════
+    Stylesheet : style.css
+    App logic  : app.js   (ES6 modules, Store + Validator pattern)
+
+    Architecture overview
+    ─────────────────────
+    Store     → single source of truth, observer pattern, localStorage persistence
+    Validator → modular form validation (required | pattern | range | custom)
+    Pages     → pure render functions, subscribed to Store via store.subscribe()
+  -->
+  <link rel="stylesheet" href="style.css">
+
+  <!--
+    Leaflet — loaded from cdnjs (allowed CDN).
+    Used only by the GPS Tracking page; harmless if offline.
+  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+</head>
+<body>
+
+<!-- ═══════════════════════ LANDING ═══════════════════════ -->
+<div id="landing">
+
+  <nav class="lp-nav">
+    <div class="lp-logo">
+      <div class="lp-logo-icon">CF</div>
+      <span class="lp-logo-text">CSO <span>Field</span></span>
+    </div>
+    <div class="lp-nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#integrations">Integrations</a>
+    </div>
+    <div class="lp-nav-cta">
+      <button class="btn-nav-outline" onclick="showLogin()">Sign In</button>
+      <button class="btn-nav-pri" onclick="showSignup()">Start Free</button>
+      <button class="lp-hamburger" id="lp-hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="lp-mobile-menu" id="lp-mobile-menu">
+    <a href="#features" onclick="closeMenu()">Features</a>
+    <a href="#pricing" onclick="closeMenu()">Pricing</a>
+    <a href="#integrations" onclick="closeMenu()">Integrations</a>
+    <div class="lp-mobile-divider"></div>
+    <a href="#" onclick="closeMenu();showLogin()">Sign In</a>
+    <button class="btn-nav-pri" style="width:100%;padding:13px;font-size:15px;border-radius:var(--radius);" onclick="closeMenu();showSignup()">Start Free →</button>
+  </div>
+
+  <!-- Hero -->
+  <section class="lp-hero">
+    <div class="lp-hero-grid"></div>
+    <div class="lp-hero-content">
+      <div class="lp-hero-badge">Built for Independent Contractors & Trade Crews</div>
+      <h1>Your Trade.<br>Your <span>Command Center.</span></h1>
+      <p>CSO Field is the all-in-one job management, profit tracking, and invoicing platform built exclusively for independent contractors. No per-job fees. No bloat. Just results.</p>
+      <div class="lp-hero-btns">
+        <button class="btn-hero-pri" onclick="showSignup()">Start For Free</button>
+        <button class="btn-hero-out" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">See Features →</button>
+      </div>
+      <div class="lp-hero-stats">
+        <div><span class="lp-stat-num">$0</span><div class="lp-stat-label">Per-job fees</div></div>
+        <div><span class="lp-stat-num">5</span><div class="lp-stat-label">Free integrations</div></div>
+        <div><span class="lp-stat-num">20+</span><div class="lp-stat-label">Core features</div></div>
+        <div><span class="lp-stat-num">AI</span><div class="lp-stat-label">Powered assistant</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="lp-section">
+      <div class="lp-section-label">Everything You Need</div>
+      <h2>Built for the Field,<br>Not the Office</h2>
+      <p class="lp-intro">Every feature was designed with one person in mind — the independent contractor who wears every hat and needs tools that actually work on a job site.</p>
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">JOB</div>
+          <h3>Job Manager</h3>
+          <p>Full pipeline: Estimate → Scheduled → In Progress → Complete → Invoiced → Paid. Job cards with client info, address, trade type, photos, and notes. Search and filter every job in one place.</p>
+          <span class="feature-tag">AI Auto-Fill</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">PRF</div>
+          <h3>Profit Calculator</h3>
+          <p>True net profit per job. Labor, materials, subcontractor fees, overhead %, travel cost, and permit fees all factored in. Know your real margin before you start the job.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">EST</div>
+          <h3>Estimate Builder</h3>
+          <p>Professional line-item estimates with labor and materials broken out. Client approval link — they sign from their phone. One-click convert to scheduled job. Version history on revisions.</p>
+          <span class="feature-tag">Digital Signature</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">INV</div>
+          <h3>Invoice Generator</h3>
+          <p>PDF invoices with your company name and license number. Partial payment tracking. Draft → Sent → Viewed → Paid status. Overdue alerts with late fee language built in.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">CAL</div>
+          <h3>Job Calendar</h3>
+          <p>Monthly and weekly view color-coded by trade type. Travel time buffers between jobs. Weather check per job day. Prevent double booking. Tap any day to add a job.</p>
+          <span class="feature-tag green">Weather-Aware</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">MAT</div>
+          <h3>Materials Tracker</h3>
+          <p>Log materials per job by item, quantity, supplier, and cost. Running total auto-deducted from profit. Monthly spend by category. Flag frequent materials as favorites.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">SUP</div>
+          <h3>Supplier Price Tracker</h3>
+          <p>Log what you paid for the same material at different suppliers over time. CSO Field builds a price history so you always know who's cheaper this month. Nobody else does this.</p>
+          <span class="feature-tag">Exclusive Feature</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">DOC</div>
+          <h3>Client Manager</h3>
+          <p>Full client address book with complete job history, lifetime value, property notes, and preferred contact method. One-click new job from any client profile.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">PHO</div>
+          <h3>Job Photo Log</h3>
+          <p>Before, during, and after photos tagged to each job phase. Timestamped. Export as PDF for warranty documentation or insurance claims. Optional watermark with your company name.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">JOB</div>
+          <h3>Digital Inspection Checklist</h3>
+          <p>Customizable pre-job and post-job checklists per trade type. Client gets a signed PDF on completion. Competitors charge extra for this — it's built into every plan here.</p>
+          <span class="feature-tag">Exclusive Feature</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">CHG</div>
+          <h3>Change Order Manager</h3>
+          <p>Scope changed on-site? Create a change order from your phone, update the price, and get client digital approval before continuing. Eliminates "I never agreed to that" disputes.</p>
+          <span class="feature-tag green">Better Than Competitors</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">TIME</div>
+          <h3>On-Site Time Clock</h3>
+          <p>Clock in on arrival, clock out on departure. Tracks actual vs estimated hours per job. Crew members clock in independently. Shows which job types run over estimate so you can reprice.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">OVH</div>
+          <h3>Overhead Analyzer</h3>
+          <p>Input your monthly fixed costs — truck, insurance, fuel, tools, phone. CSO Field calculates your true cost per hour and minimum job rate to break even. Flags underpriced jobs automatically.</p>
+          <span class="feature-tag">Exclusive Feature</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">RPTS</div>
+          <h3>Job Type Profitability</h3>
+          <p>"Your bathroom remodels average $847 net. Your drywall patches average $92." Know exactly which job types are worth taking. Competitors show revenue — we show what you actually keep.</p>
+          <span class="feature-tag">Exclusive Feature</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">RTE</div>
+          <h3>Route Optimizer</h3>
+          <p>Running 3 jobs today? AI suggests the most fuel-efficient order based on addresses. Built in — not an add-on. Saves 30-60 minutes and real fuel money every day.</p>
+          <span class="feature-tag green">Free — No Add-On</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">REV</div>
+          <h3>Review Requester</h3>
+          <p>Auto-generates a Google review request after job completion. Send via text or email. Track which clients left reviews. Contractors live and die by reviews — this alone pays for the subscription.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">REC</div>
+          <h3>Maintenance Plan Manager</h3>
+          <p>Create recurring service agreements — client pays monthly or yearly, jobs auto-schedule. HVAC, pest control, landscaping. A huge revenue upgrade most affordable tools completely ignore.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">FLW</div>
+          <h3>Automated Follow-Ups</h3>
+          <p>Estimate not responded to in 48 hours? Auto follow-up. Job complete? Auto thank-you + review request. 6 months later? Auto check-in. Contractors leave thousands on the table from dropped leads.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">MSG</div>
+          <h3>Client Communication Log</h3>
+          <p>Every call note, text, and message logged per job. Never lose track of what was promised. Full paper trail when clients dispute scope or pricing.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">LIC</div>
+          <h3>License & Insurance Tracker</h3>
+          <p>Input license, insurance, bond, and vehicle registration expiry dates. Alerts at 60, 30, and 7 days out. Getting caught with an expired license on a job site is a serious problem.</p>
+          <span class="feature-tag green">Exclusive Feature</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">CRW</div>
+          <h3>Crew Manager</h3>
+          <p>Add crew members and subs. Assign jobs. Track hours per person per job. Settlement calculator — pay per job or hourly with auto-expense deductions.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-txt">AI</div>
+          <h3>AI Assistant</h3>
+          <p>Estimate writer, invoice drafter, material cost estimator, client message drafter, and route optimizer — all powered by Claude AI. Your smartest crew member who never calls in sick.</p>
+          <span class="feature-tag">Claude AI Powered</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <div class="lp-section-dark" id="pricing">
+    <div class="lp-section">
+      <div class="lp-section-label">Simple Pricing</div>
+      <h2>Straightforward Plans.<br>No Surprises.</h2>
+      <p class="lp-intro">No per-job fees. No hidden charges. Cancel any time. Start free and upgrade when you're ready to grow.</p>
+
+      <div class="pricing-toggle-wrap">
+        <span class="pricing-toggle-label active" id="toggle-mo-lbl">Monthly</span>
+        <div class="pricing-toggle" id="billing-toggle" onclick="toggleBilling()">
+          <div class="pricing-toggle-thumb"></div>
+        </div>
+        <span class="pricing-toggle-label" id="toggle-yr-lbl">Yearly</span>
+        <span class="pricing-save-badge" id="toggle-save" style="display:none;">Save 2 Months Free</span>
+      </div>
+
+      <div class="pricing-grid">
+
+        <div class="pricing-card">
+          <div class="pricing-plan">Free</div>
+          <div class="pricing-price"><span class="price-dollar">$</span><span class="price-num">0</span><span class="price-period">/mo</span></div>
+          <div class="pricing-desc">Test drive with no commitment. No credit card required.</div>
+          <ul class="pricing-features">
+            <li>Up to 5 active jobs</li>
+            <li>1 user</li>
+            <li>Dashboard & profit calculator</li>
+            <li>Client manager</li>
+            <li class="no">AI assistant</li>
+            <li class="no">Estimate builder</li>
+            <li class="no">Change orders</li>
+            <li class="no">Crew manager</li>
+          </ul>
+          <button class="btn-pricing btn-pricing-outline" onclick="showSignup()">Get Started Free</button>
+        </div>
+
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-plan">Solo</div>
+          <div class="pricing-price"><span class="price-dollar">$</span><span class="price-num" data-monthly="49" data-yearly="41">49</span><span class="price-period">/mo</span></div>
+          <div class="price-yearly-note" style="display:none;">Billed $490/yr — 2 months free</div>
+          <div class="pricing-desc">Everything a one-person operation needs to run like a pro.</div>
+          <ul class="pricing-features">
+            <li>Unlimited jobs</li>
+            <li>1 user</li>
+            <li>Full AI assistant</li>
+            <li>Estimate builder + digital signature</li>
+            <li>Invoice generator & PDF</li>
+            <li>Change order manager</li>
+            <li>Job photo log</li>
+            <li>License & insurance alerts</li>
+          </ul>
+          <button class="btn-pricing btn-pricing-white" onclick="showSignup()">Start Solo Plan</button>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-plan">Crew</div>
+          <div class="pricing-price"><span class="price-dollar">$</span><span class="price-num" data-monthly="99" data-yearly="83">99</span><span class="price-period">/mo</span></div>
+          <div class="price-yearly-note" style="display:none;">Billed $990/yr — 2 months free</div>
+          <div class="pricing-desc">For contractors managing a small crew or subcontractors.</div>
+          <ul class="pricing-features">
+            <li>Unlimited jobs</li>
+            <li>Up to 10 crew members</li>
+            <li>All Solo features</li>
+            <li>Crew manager & settlements</li>
+            <li>Route optimizer</li>
+            <li>Maintenance plan manager</li>
+            <li>Automated follow-ups</li>
+            <li class="no">Priority support</li>
+          </ul>
+          <button class="btn-pricing btn-pricing-outline" onclick="showSignup()">Start Crew Plan</button>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-plan">Pro</div>
+          <div class="pricing-price"><span class="price-dollar">$</span><span class="price-num" data-monthly="149" data-yearly="124">149</span><span class="price-period">/mo</span></div>
+          <div class="price-yearly-note" style="display:none;">Billed $1,490/yr — 2 months free</div>
+          <div class="pricing-desc">Full power for growing operations that need every tool.</div>
+          <ul class="pricing-features">
+            <li>Unlimited jobs</li>
+            <li>Unlimited crew members</li>
+            <li>All Crew features</li>
+            <li>Job type profitability reports</li>
+            <li>Supplier price tracker</li>
+            <li>Overhead analyzer</li>
+            <li>Data export (CSV)</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="btn-pricing btn-pricing-outline" onclick="showSignup()">Start Pro Plan</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Integrations -->
+  <section id="integrations">
+    <div class="lp-section">
+      <div class="lp-section-label">Integrations</div>
+      <h2>Powerful Tools.<br>No Extra Cost.</h2>
+      <p class="lp-intro">Every integration in CSO Field is completely free or included in your plan — no hidden API fees or surprise charges.</p>
+      <div class="integrations-grid">
+        <div class="int-card"><div class="int-icon-txt">MAP</div><div><div class="int-name">OpenStreetMap</div><div class="int-free">100% Free</div></div></div>
+        <div class="int-card"><div class="int-icon-txt">WX</div><div><div class="int-name">Open-Meteo Weather</div><div class="int-free">100% Free</div></div></div>
+        <div class="int-card"><div class="int-icon-txt">EIA</div><div><div class="int-name">EIA Fuel Price API</div><div class="int-free">100% Free</div></div></div>
+        <div class="int-card"><div class="int-icon-txt">GEO</div><div><div class="int-name">Geoapify Address</div><div class="int-free">Free Tier</div></div></div>
+        <div class="int-card"><div class="int-icon-txt">AI</div><div><div class="int-name">Claude AI</div><div class="int-free">Included in Plan</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="lp-footer">
+    <div class="lp-footer-inner">
+      <div class="lp-footer-top">
+        <div class="lp-footer-brand">
+          <div class="lp-logo" style="min-width:unset;">
+            <div class="lp-logo-icon">CF</div>
+            <span class="lp-logo-text">CSO <span>Field</span></span>
+          </div>
+          <p>The command center for independent contractors, trade crews, and small construction businesses.</p>
+        </div>
+        <div class="lp-footer-links">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#integrations">Integrations</a>
+        </div>
+        <div class="lp-footer-links">
+          <h4>Legal</h4>
+          <a href="#" onclick="openModal('modal-terms');return false;">Terms & Conditions</a>
+          <a href="#" onclick="openModal('modal-privacy');return false;">Privacy Policy</a>
+        </div>
+        <div class="lp-footer-links">
+          <h4>Account</h4>
+          <a href="#" onclick="showLogin()">Sign In</a>
+          <a href="#" onclick="showSignup()">Create Account</a>
+        </div>
+      </div>
+      <div class="lp-footer-bottom">
+        <p>© 2025 CSO Property Services. All rights reserved.</p>
+        <p>Dallas, TX · legal@csopropertyservice.com</p>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- end #landing -->
+
+<!-- ═══════════════════════ AUTH MODALS ═══════════════════════ -->
+<div class="modal-overlay" id="modal-auth">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-hd">
+      <div class="modal-title" id="auth-title">Sign In</div>
+      <button class="modal-close" onclick="closeModal('modal-auth')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="auth-login-view">
+        <div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" id="login-email" placeholder="you@example.com"></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-control" type="password" id="login-password" placeholder="••••••••"></div>
+        <button class="btn btn-pri" style="width:100%;justify-content:center;padding:12px;" onclick="doLogin()">Sign In</button>
+        <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--txt3);">No account? <a href="#" onclick="showSignup()">Sign up free</a></p>
+      </div>
+      <div id="auth-signup-view" style="display:none;">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First Name</label><input class="form-control" id="su-fname" placeholder="John"></div>
+          <div class="form-group"><label class="form-label">Last Name</label><input class="form-control" id="su-lname" placeholder="Smith"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" id="su-email" placeholder="you@example.com"></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-control" type="password" id="su-pass" placeholder="Min 8 characters"></div>
+        <button class="btn btn-pri" style="width:100%;justify-content:center;padding:12px;" onclick="doSignup()">Create Free Account</button>
+        <p style="text-align:center;margin-top:12px;font-size:11px;color:var(--txt3);">By signing up you agree to our <a href="#" onclick="openModal('modal-terms');return false;">Terms & Conditions</a> and <a href="#" onclick="openModal('modal-privacy');return false;">Privacy Policy</a></p>
+        <p style="text-align:center;margin-top:6px;font-size:13px;color:var(--txt3);">Have an account? <a href="#" onclick="showLogin()">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ TERMS MODAL ═══════════════════════ -->
+<div class="modal-overlay" id="modal-terms">
+  <div class="modal modal-lg">
+    <div class="modal-hd">
+      <div class="modal-title">Terms & Conditions</div>
+      <button class="modal-close" onclick="closeModal('modal-terms')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tc-section" style="border:none;padding:0;box-shadow:none;">
+        <p class="tc-effective">Effective Date: January 1, 2025 &nbsp;|&nbsp; Last Updated: May 1, 2025 &nbsp;|&nbsp; Governed by the laws of the State of Texas</p>
+        <h3>1. Acceptance of Terms</h3>
+        <p>By accessing or using CSO Field ("the Platform"), operated by CSO Property Services ("Company," "we," "us," or "our"), you agree to be bound by these Terms and Conditions. If you do not agree, do not use the Platform.</p>
+        <h3>2. Description of Service</h3>
+        <p>CSO Field is a Software-as-a-Service platform providing job management, profit tracking, invoicing, estimate building, crew management, and AI-powered tools for independent contractors, trade professionals, and small construction crews. We reserve the right to modify, suspend, or discontinue any feature at any time.</p>
+        <h3>3. Eligibility</h3>
+        <p>You must be at least 18 years of age and legally authorized to operate a business in your jurisdiction. By creating an account, you represent that all information you provide is accurate and complete.</p>
+        <h3>4. Account Registration & Security</h3>
+        <p>You are responsible for maintaining the confidentiality of your account credentials. You agree to notify us immediately of any unauthorized use, not share credentials with third parties, and accept responsibility for all activity under your account.</p>
+        <h3>5. Subscription Plans & Billing</h3>
+        <p>CSO Field offers free and paid subscription tiers billed monthly or annually. By subscribing to a paid plan, you authorize recurring charges until cancellation.</p>
+        <ul>
+          <li><strong>Free Plan:</strong> No charge. Limited to 5 jobs and 1 user.</li>
+          <li><strong>Solo Plan:</strong> $49/month. 1 user, unlimited jobs, AI features.</li>
+          <li><strong>Crew Plan:</strong> $99/month. Up to 3 crew members, all Solo features.</li>
+          <li><strong>Pro Plan:</strong> $149/month. Up to 10 crew members, full feature access.</li>
+        </ul>
+        <p style="margin-top:10px;">Yearly plans are billed annually at a discounted rate (2 months free). All prices in USD. We reserve the right to change pricing with 30 days' notice to existing subscribers.</p>
+        <h3>6. Cancellation & Refunds</h3>
+        <p>You may cancel at any time from account settings. Cancellation takes effect at the end of the current billing period. No prorated refunds for partial months. Billing error refund requests must be submitted within 7 days.</p>
+        <h3>7. Acceptable Use</h3>
+        <p>You agree not to use CSO Field to violate applicable laws, upload malicious code, attempt unauthorized access, reverse engineer the Platform, harass any person, scrape data without permission, or resell the Platform without authorization.</p>
+        <h3>8. AI-Powered Features</h3>
+        <p>CSO Field includes AI tools powered by Anthropic's Claude AI. AI outputs are suggestions only and should not replace professional judgment. We do not guarantee accuracy of AI-generated content. You are solely responsible for verifying AI-generated information before acting on it.</p>
+        <h3>9. Third-Party Integrations</h3>
+        <p>CSO Field integrates with third-party services including OpenStreetMap, Open-Meteo, EIA, Geoapify, and Anthropic. Your use of these integrations is subject to the respective third-party terms. We are not responsible for third-party availability or accuracy.</p>
+        <h3>10. Data & Privacy</h3>
+        <p>You retain ownership of all data you input into the Platform. We may use anonymized, aggregated data for product improvement. We will not sell your personally identifiable information to third parties.</p>
+        <h3>11. Intellectual Property</h3>
+        <p>All content, design, code, and branding of CSO Field are the intellectual property of CSO Property Services, protected by applicable intellectual property laws. You may not copy, modify, or distribute any part of the Platform without written consent.</p>
+        <h3>12. Disclaimer of Warranties</h3>
+        <p>THE PLATFORM IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. WE DO NOT WARRANT THAT THE PLATFORM WILL BE UNINTERRUPTED OR ERROR-FREE. YOUR USE IS AT YOUR SOLE RISK.</p>
+        <h3>13. Limitation of Liability</h3>
+        <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, CSO PROPERTY SERVICES SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES. OUR TOTAL LIABILITY SHALL NOT EXCEED AMOUNTS PAID IN THE 12 MONTHS PRECEDING ANY CLAIM.</p>
+        <h3>14. Indemnification</h3>
+        <p>You agree to indemnify and hold harmless CSO Property Services from any claims arising from your use of the Platform, violation of these Terms, or violation of any third-party rights.</p>
+        <h3>15. Governing Law & Dispute Resolution</h3>
+        <p>These Terms are governed by the laws of the State of Texas. Disputes shall be settled by binding arbitration in Dallas County, Texas under AAA rules. Class action lawsuits are expressly waived.</p>
+        <h3>16. Changes to Terms</h3>
+        <p>We may modify these Terms at any time with 14 days' notice via email or in-app notification. Continued use after the effective date constitutes acceptance.</p>
+        <h3>17. Contact</h3>
+        <p><strong>CSO Property Services</strong> — Dallas, Texas — legal@csopropertyservice.com</p>
+      </div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-pri" onclick="closeModal('modal-terms')">Close</button></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PRIVACY POLICY MODAL ═══════════════════════ -->
+<div class="modal-overlay" id="modal-privacy">
+  <div class="modal modal-lg">
+    <div class="modal-hd">
+      <div class="modal-title">Privacy Policy</div>
+      <button class="modal-close" onclick="closeModal('modal-privacy')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tc-section" style="border:none;padding:0;box-shadow:none;">
+        <p class="tc-effective">Effective Date: January 1, 2025 &nbsp;|&nbsp; Last Updated: May 1, 2025 &nbsp;|&nbsp; Governed by the laws of the State of Texas</p>
+
+        <h3>1. Introduction</h3>
+        <p>CSO Property Services ("Company," "we," "us," or "our") operates CSO Field ("the Platform"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Platform. Please read this policy carefully. If you disagree with its terms, please discontinue use of the Platform.</p>
+
+        <h3>2. Information We Collect</h3>
+        <p>We collect information you provide directly to us, including:</p>
+        <ul>
+          <li><strong>Account Information:</strong> Your name, email address, password, business name, contractor license number, trade type, and home state when you register</li>
+          <li><strong>Business Data:</strong> Job records, client information, estimates, invoices, materials, crew details, and financial data you enter into the Platform</li>
+          <li><strong>Payment Information:</strong> Billing details processed securely through Stripe. We do not store full credit card numbers on our servers</li>
+          <li><strong>Usage Data:</strong> Log data including IP address, browser type, pages visited, time spent, and actions taken within the Platform</li>
+          <li><strong>Device Information:</strong> Device type, operating system, and unique device identifiers</li>
+          <li><strong>Communications:</strong> Any messages or support requests you send to us</li>
+        </ul>
+
+        <h3>3. How We Use Your Information</h3>
+        <p>We use the information we collect to:</p>
+        <ul>
+          <li>Provide, operate, and maintain the Platform</li>
+          <li>Process transactions and send related billing information</li>
+          <li>Send administrative communications including confirmations, updates, and security alerts</li>
+          <li>Respond to your comments, questions, and customer service requests</li>
+          <li>Analyze usage patterns to improve the Platform's features and performance</li>
+          <li>Power AI-assisted features using anonymized job data sent to Anthropic's Claude API</li>
+          <li>Comply with legal obligations and enforce our Terms and Conditions</li>
+          <li>Detect and prevent fraudulent or unauthorized activity</li>
+        </ul>
+
+        <h3>4. How We Share Your Information</h3>
+        <p>We do not sell your personally identifiable information. We may share your information only in the following circumstances:</p>
+        <ul>
+          <li><strong>Service Providers:</strong> With trusted third-party vendors who assist us in operating the Platform, including Supabase (database and authentication), Stripe (payment processing), Anthropic (AI features), OpenStreetMap, Open-Meteo, EIA, and Geoapify (free data integrations). Each provider is bound by their own privacy policies and data processing agreements</li>
+          <li><strong>Legal Requirements:</strong> When required by law, court order, or government authority</li>
+          <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets, with notice provided to affected users</li>
+          <li><strong>Protection of Rights:</strong> When necessary to protect the rights, property, or safety of CSO Property Services, our users, or others</li>
+        </ul>
+
+        <h3>5. Data Storage & Security</h3>
+        <p>Your data is stored on Supabase's secure cloud infrastructure hosted in the United States. We implement industry-standard security measures including encryption in transit (TLS/SSL), encrypted storage, access controls, and regular security reviews. However, no method of transmission over the internet is 100% secure. We cannot guarantee absolute security but are committed to protecting your data using commercially reasonable means.</p>
+
+        <h3>6. Data Retention</h3>
+        <p>We retain your account data for as long as your account is active or as needed to provide services. If you delete your account, we will delete or anonymize your personal data within 30 days, except where retention is required by law or for legitimate business purposes such as resolving disputes or enforcing agreements.</p>
+
+        <h3>7. AI Features & Data Processing</h3>
+        <p>CSO Field uses Anthropic's Claude AI to power features including the Estimate Writer, Client Message Drafter, Material Cost Estimator, and Route Optimizer. When you use these features, the text you input is sent to Anthropic's API for processing. We do not send personally identifiable information to Anthropic beyond what you type into the AI input fields. Anthropic processes this data under their own privacy policy available at anthropic.com. AI-generated outputs are suggestions only and are not stored permanently by the Platform.</p>
+
+        <h3>8. Cookies & Tracking</h3>
+        <p>CSO Field uses localStorage (browser storage) to save your theme preference and app data locally on your device. We do not use third-party advertising cookies or cross-site tracking technologies. We do not serve ads and do not share data with advertising networks.</p>
+
+        <h3>9. Your Rights & Choices</h3>
+        <p>Depending on your location, you may have the following rights regarding your personal data:</p>
+        <ul>
+          <li><strong>Access:</strong> Request a copy of the personal data we hold about you</li>
+          <li><strong>Correction:</strong> Request correction of inaccurate or incomplete data</li>
+          <li><strong>Deletion:</strong> Request deletion of your personal data (right to be forgotten)</li>
+          <li><strong>Portability:</strong> Export your data in CSV format directly from Settings in the Platform</li>
+          <li><strong>Opt-Out:</strong> Opt out of non-essential communications at any time by contacting us</li>
+        </ul>
+        <p style="margin-top:10px;">To exercise any of these rights, contact us at privacy@csopropertyservice.com. We will respond within 30 days.</p>
+
+        <h3>10. Children's Privacy</h3>
+        <p>CSO Field is not directed to individuals under the age of 18. We do not knowingly collect personal information from children. If you believe we have inadvertently collected such information, please contact us immediately and we will delete it promptly.</p>
+
+        <h3>11. California Privacy Rights (CCPA)</h3>
+        <p>If you are a California resident, you have the right to know what personal information we collect, request deletion of your data, and opt out of the sale of personal information. We do not sell personal information. To submit a CCPA request, contact us at privacy@csopropertyservice.com.</p>
+
+        <h3>12. Texas Privacy Rights</h3>
+        <p>Texas residents have rights under the Texas Data Privacy and Security Act (TDPSA) including the right to access, correct, delete, and obtain a copy of personal data. To exercise your rights under TDPSA, contact us at privacy@csopropertyservice.com.</p>
+
+        <h3>13. Third-Party Links</h3>
+        <p>The Platform may contain links to third-party websites. We are not responsible for the privacy practices of those sites and encourage you to review their privacy policies before providing any personal information.</p>
+
+        <h3>14. Changes to This Policy</h3>
+        <p>We may update this Privacy Policy periodically. We will notify you of material changes via email or in-app notification at least 14 days before the change takes effect. Your continued use of the Platform after the effective date constitutes acceptance of the updated policy.</p>
+
+        <h3>15. Contact Us</h3>
+        <p>For privacy-related questions, data requests, or concerns:</p>
+        <p style="margin-top:10px;"><strong>CSO Property Services</strong><br>Dallas, Texas<br>Email: privacy@csopropertyservice.com</p>
+      </div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-pri" onclick="closeModal('modal-privacy')">Close</button></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ ONBOARDING ═══════════════════════ -->
+<div id="onboarding">
+  <div class="onboard-card">
+    <div class="onboard-progress">
+      <div class="onboard-dot active" id="od-1"></div>
+      <div class="onboard-dot" id="od-2"></div>
+      <div class="onboard-dot" id="od-3"></div>
+    </div>
+    <div class="onboard-step active" id="ob-1">
+      <div class="onboard-icon-txt">CSO</div>
+      <h2>Welcome to CSO Field</h2>
+      <p>Let's get your command center ready in 60 seconds. Tell us about your business.</p>
+      <div class="form-group" style="text-align:left;"><label class="form-label">Business Name</label><input class="form-control" id="ob-company" placeholder="Smith Plumbing LLC"></div>
+      <div class="form-group" style="text-align:left;"><label class="form-label">Trade Type</label>
+        <select class="form-control" id="ob-trade">
+          <option>Plumbing</option><option>Electrical</option><option>HVAC</option><option>Roofing</option><option>Painting</option><option>Carpentry</option><option>Flooring</option><option>Landscaping</option><option>General Contractor</option><option>Handyman</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group" style="text-align:left;"><label class="form-label">Home Base State</label>
+        <select class="form-control" id="ob-state">
+          <option>Alabama</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Florida</option><option>Georgia</option><option>Illinois</option><option>Indiana</option><option>Kansas</option><option>Louisiana</option><option>Michigan</option><option>Mississippi</option><option>Missouri</option><option>New York</option><option>North Carolina</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Tennessee</option><option selected>Texas</option><option>Virginia</option><option>Washington</option>
+        </select>
+      </div>
+      <button class="btn btn-pri" style="width:100%;justify-content:center;" onclick="obNext(2)">Continue →</button>
+    </div>
+    <div class="onboard-step" id="ob-2">
+      <div class="onboard-icon-txt">LIC</div>
+      <h2>License & Insurance</h2>
+      <p>These appear on your invoices and estimates. Skip and add later if needed.</p>
+      <div class="form-group" style="text-align:left;"><label class="form-label">Contractor License #</label><input class="form-control" id="ob-license" placeholder="e.g. TACLB012345C"></div>
+      <div class="form-group" style="text-align:left;"><label class="form-label">License Expiry Date</label><input class="form-control" type="date" id="ob-license-exp"></div>
+      <div class="form-group" style="text-align:left;"><label class="form-label">Insurance Renewal Date</label><input class="form-control" type="date" id="ob-ins-exp"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="obNext(1)">← Back</button>
+        <button class="btn btn-pri" style="flex:2;justify-content:center;" onclick="obNext(3)">Continue →</button>
+      </div>
+    </div>
+    <div class="onboard-step" id="ob-3">
+      <div class="onboard-icon-txt">$</div>
+      <h2>Your Rates & Goals</h2>
+      <p>Powers your profit calculator and dashboard goal tracker.</p>
+      <div class="form-row" style="text-align:left;">
+        <div class="form-group"><label class="form-label">Hourly Labor Rate ($)</label><input class="form-control" type="number" id="ob-rate" placeholder="75" value="75"></div>
+        <div class="form-group"><label class="form-label">Overhead % per Job</label><input class="form-control" type="number" id="ob-overhead" placeholder="15" value="15"></div>
+      </div>
+      <div class="form-group" style="text-align:left;"><label class="form-label">Monthly Revenue Goal ($)</label><input class="form-control" type="number" id="ob-goal" placeholder="8000" value="8000"></div>
+      <button class="btn btn-pri" style="width:100%;justify-content:center;" onclick="finishOnboarding()">Launch My Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ APP SHELL ═══════════════════════ -->
+<div id="app">
+
+  <aside id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">CF</div>
+      <div>
+        <div class="sb-logo-text">CSO <span>Field</span></div>
+        <span class="sb-logo-sub">CSO Field · Trades Platform</span>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-lbl">Main</div>
+      <div class="sb-item active" onclick="navTo('dashboard',this)"><span class="sb-item-icon-txt">DB</span><span class="sb-item-label">Dashboard</span></div>
+      <div class="sb-item" onclick="navTo('jobs',this)"><span class="sb-item-icon-txt">JB</span><span class="sb-item-label">Job Manager</span></div>
+      <div class="sb-item" onclick="navTo('calendar',this)"><span class="sb-item-icon-txt">CAL</span><span class="sb-item-label">Job Calendar</span></div>
+      <div class="sb-item" onclick="navTo('profit',this)"><span class="sb-item-icon-txt">PL</span><span class="sb-item-label">Profit Calculator</span></div>
+      <div class="sb-lbl">Finance</div>
+      <div class="sb-item" onclick="navTo('estimates',this)"><span class="sb-item-icon-txt">EST</span><span class="sb-item-label">Estimates</span></div>
+      <div class="sb-item" onclick="navTo('invoices',this)"><span class="sb-item-icon-txt">INV</span><span class="sb-item-label">Invoices</span></div>
+      <div class="sb-item" onclick="navTo('materials',this)"><span class="sb-item-icon-txt">MAT</span><span class="sb-item-label">Materials</span></div>
+      <div class="sb-lbl">Operations</div>
+      <div class="sb-item" onclick="navTo('clients',this)"><span class="sb-item-icon-txt">CL</span><span class="sb-item-label">Clients</span></div>
+      <div class="sb-item" onclick="navTo('crew',this)"><span class="sb-item-icon-txt">CRW</span><span class="sb-item-label">Crew Manager</span></div>
+      <div class="sb-item" onclick="navTo('gps',this)"><span class="sb-item-icon-txt">GPS</span><span class="sb-item-label">GPS Tracking</span></div>
+      <div class="sb-item" onclick="navTo('booking',this)"><span class="sb-item-icon-txt">BK</span><span class="sb-item-label">Online Booking</span></div>
+      <div class="sb-item" onclick="navTo('checklist',this)"><span class="sb-item-icon-txt">CHK</span><span class="sb-item-label">Checklists</span></div>
+      <div class="sb-item" onclick="navTo('documents',this)"><span class="sb-item-icon-txt">DOC</span><span class="sb-item-label">Documents</span></div>
+      <div class="sb-lbl">Tools</div>
+      <div class="sb-item" onclick="navTo('ai',this)"><span class="sb-item-icon-txt">AI</span><span class="sb-item-label">AI Assistant</span></div>
+      <div class="sb-item" onclick="navTo('overhead',this)"><span class="sb-item-icon-txt">OH</span><span class="sb-item-label">Overhead Analyzer</span></div>
+      <div class="sb-item" onclick="navTo('goals',this)"><span class="sb-item-icon-txt">GL</span><span class="sb-item-label">Goals</span></div>
+      <div class="sb-lbl">Account</div>
+      <div class="sb-item" onclick="navTo('settings',this)"><span class="sb-item-icon-txt">SET</span><span class="sb-item-label">Settings</span></div>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user" onclick="navTo('settings',null)">
+        <div class="sb-avatar" id="sb-avatar">JD</div>
+        <div>
+          <div class="sb-user-name" id="sb-name">Loading...</div>
+          <div class="sb-user-plan" id="sb-plan">Free Plan</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <header id="topbar">
+    <div class="topbar-left">
+      <button class="topbar-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-page-title" id="topbar-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-weather" id="topbar-weather">Loading weather...</div>
+      <button class="theme-toggle" onclick="toggleTheme()">Dark</button>
+      <button class="btn btn-outline btn-sm" onclick="doLogout()">Sign Out</button>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-subtitle" id="dash-greeting">Good morning — ready to build something great today.</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Month Revenue</div><div class="stat-value" id="stat-rev">$0</div><div class="stat-sub" id="stat-rev-sub">0 jobs this month</div></div>
+        <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value" id="stat-profit">$0</div><div class="stat-sub">After labor & overhead</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Job Value</div><div class="stat-value" id="stat-avg">$0</div><div class="stat-sub">This month</div></div>
+        <div class="stat-card"><div class="stat-label">Active Jobs</div><div class="stat-value" id="stat-active">0</div><div class="stat-sub" id="stat-active-sub">0 in progress</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px;" class="dash-grid">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Revenue Trend</div><span class="badge badge-orange">Last 6 Months</span></div>
+          <div class="card-body">
+            <div class="mini-chart">
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:35%"></div><div class="chart-bar-label">Dec</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:50%"></div><div class="chart-bar-label">Jan</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:65%"></div><div class="chart-bar-label">Feb</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:42%"></div><div class="chart-bar-label">Mar</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:78%"></div><div class="chart-bar-label">Apr</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:58%"></div><div class="chart-bar-label">May</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Monthly Goal</div></div>
+          <div class="card-body">
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span style="font-size:13px;color:var(--txt2);">Revenue</span><span style="font-size:13px;font-weight:700;" id="goal-pct">0%</span></div>
+              <div class="progress-bar"><div class="progress-fill" id="goal-bar" style="width:0%"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:5px;"><span style="font-size:11px;color:var(--txt3);" id="goal-earned">$0 earned</span><span style="font-size:11px;color:var(--txt3);" id="goal-target">Goal: $8,000</span></div>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:12px;">
+              <div style="font-size:11px;color:var(--txt3);margin-bottom:5px;">Today's Weather</div>
+              <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--orange);" id="dash-weather">Loading...</div>
+              <div style="font-size:11px;color:var(--txt3);">Via Open-Meteo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="dash-grid">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Recent Jobs</div><button class="btn btn-outline btn-sm" onclick="navTo('jobs',null)">View All</button></div>
+          <div class="card-body" id="dash-recent-jobs"><div style="text-align:center;padding:28px;color:var(--txt3);font-size:14px;">No jobs yet. <a href="#" onclick="navTo('jobs',null);openAddJob()">Add your first job →</a></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Alerts</div></div>
+          <div class="card-body" id="dash-alerts"><div style="text-align:center;padding:28px;color:var(--txt3);font-size:14px;">No alerts — you're all good</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOBS -->
+    <div class="page" id="page-jobs">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div class="page-title">Job Manager</div><div class="page-subtitle">Track every job from estimate to paid</div></div>
+        <button class="btn btn-pri" onclick="openAddJob()">+ Add Job</button>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+        <input class="form-control" style="max-width:240px;" type="text" placeholder="Search jobs..." id="job-search" oninput="renderJobs()">
+        <select class="form-control" style="max-width:150px;" id="job-status-filter" onchange="renderJobs()">
+          <option value="">All Statuses</option>
+          <option>Estimate</option><option>Scheduled</option><option>In Progress</option><option>Complete</option><option>Invoiced</option><option>Paid</option>
+        </select>
+      </div>
+      <div class="pipeline">
+        <div class="pipeline-step active" onclick="filterJobStatus('',this)">All</div>
+        <div class="pipeline-step" onclick="filterJobStatus('Estimate',this)">📝 Estimate</div>
+        <div class="pipeline-step" onclick="filterJobStatus('Scheduled',this)">Scheduled</div>
+        <div class="pipeline-step" onclick="filterJobStatus('In Progress',this)">In Progress</div>
+        <div class="pipeline-step" onclick="filterJobStatus('Complete',this)">Complete</div>
+        <div class="pipeline-step done" onclick="filterJobStatus('Paid',this)">💚 Paid</div>
+      </div>
+      <div id="jobs-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;">
+        <div style="grid-column:1/-1;text-align:center;padding:56px;color:var(--txt3);"><div style="font-size:16px;font-weight:600;margin-bottom:6px;">No jobs yet</div><button class="btn btn-pri" onclick="openAddJob()">+ Add First Job</button></div>
+      </div>
+    </div>
+
+    <!-- PROFIT CALCULATOR -->
+    <div class="page" id="page-profit">
+      <div class="page-header"><div class="page-title">Profit Calculator</div><div class="page-subtitle">Know your true margin before you start the job</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;" class="dash-grid">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Job Details</div></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Job Value ($)</label><input class="form-control" type="number" id="pc-value" placeholder="2500" oninput="calcProfit()"></div>
+              <div class="form-group"><label class="form-label">Labor Hours</label><input class="form-control" type="number" id="pc-hours" placeholder="8" oninput="calcProfit()"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Hourly Rate ($)</label><input class="form-control" type="number" id="pc-rate" placeholder="75" value="75" oninput="calcProfit()"></div>
+              <div class="form-group"><label class="form-label">Materials Cost ($)</label><input class="form-control" type="number" id="pc-materials" placeholder="400" oninput="calcProfit()"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Overhead %</label><input class="form-control" type="number" id="pc-overhead" placeholder="15" value="15" oninput="calcProfit()"></div>
+              <div class="form-group"><label class="form-label">Sub / Helper Cost ($)</label><input class="form-control" type="number" id="pc-subs" placeholder="0" oninput="calcProfit()"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Travel / Fuel ($)</label><input class="form-control" type="number" id="pc-travel" placeholder="0" oninput="calcProfit()"></div>
+              <div class="form-group"><label class="form-label">Permit Fees ($)</label><input class="form-control" type="number" id="pc-permits" placeholder="0" oninput="calcProfit()"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Breakdown</div></div>
+          <div class="card-body" id="profit-breakdown"><div style="text-align:center;padding:40px;color:var(--txt3);">Enter job details to calculate profit</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTIMATES -->
+    <div class="page" id="page-estimates">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div class="page-title">Estimates</div><div class="page-subtitle">Build, send, and track client estimates</div></div>
+        <button class="btn btn-pri" onclick="openAddEstimate()">+ New Estimate</button>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">All Estimates</div></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Est #</th><th>Client</th><th>Job Type</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="estimates-tbody"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--txt3);">No estimates yet.</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- INVOICES -->
+    <div class="page" id="page-invoices">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div class="page-title">Invoices</div><div class="page-subtitle">Generate and track all your invoices</div></div>
+        <button class="btn btn-pri" onclick="toast('Select a completed job and click Invoice from the Job Manager','info')">+ Create Invoice</button>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">Invoice History</div></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Invoice #</th><th>Client</th><th>Job</th><th>Amount</th><th>Status</th><th>Due Date</th><th>Actions</th></tr></thead>
+          <tbody id="invoices-tbody"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--txt3);">No invoices yet. Create one from a completed job.</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATERIALS -->
+    <div class="page" id="page-materials">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div class="page-title">Materials Tracker</div><div class="page-subtitle">Track materials and supplier pricing over time</div></div>
+        <button class="btn btn-pri" onclick="openAddMaterial()">+ Log Material</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="dash-grid">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Material Log</div></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Item</th><th>Supplier</th><th>Qty</th><th>Unit Cost</th><th>Total</th></tr></thead>
+            <tbody id="materials-tbody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--txt3);">No materials logged.</td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Supplier Price History</div><span class="badge badge-orange">Exclusive</span></div>
+          <div class="card-body" id="supplier-history-body"><div style="text-align:center;padding:28px;color:var(--txt3);font-size:13px;">Log the same item from multiple suppliers to build price history and always know who's cheaper.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="page" id="page-clients">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div class="page-title">Client Manager</div><div class="page-subtitle">Your full client book with job history and lifetime value</div></div>
+        <button class="btn btn-pri" onclick="openAddClient()">+ Add Client</button>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">All Clients</div></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Name</th><th>Phone</th><th>Address</th><th>Jobs</th><th>Lifetime Value</th><th>Actions</th></tr></thead>
+          <tbody id="clients-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--txt3);">No clients yet.</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREW -->
+    <div class="page" id="page-crew">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div class="page-title">Crew Manager</div><div class="page-subtitle">Assign jobs, track hours, manage settlements</div></div>
+        <button class="btn btn-pri" onclick="openAddCrew()">+ Add Crew Member</button>
+      </div>
+      <div class="kanban" id="crew-kanban">
+        <div class="kanban-col"><div class="kanban-col-title">🟡 Available</div><div id="kanban-avail"><div style="text-align:center;padding:18px;color:var(--txt3);font-size:13px;">No crew added</div></div></div>
+        <div class="kanban-col"><div class="kanban-col-title">On Job</div><div id="kanban-onjob"><div style="text-align:center;padding:18px;color:var(--txt3);font-size:13px;">No active jobs</div></div></div>
+        <div class="kanban-col"><div class="kanban-col-title">Done Today</div><div id="kanban-done"><div style="text-align:center;padding:18px;color:var(--txt3);font-size:13px;">No completions</div></div></div>
+      </div>
+    </div>
+
+    <!-- CHECKLISTS -->
+    <div class="page" id="page-checklist">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div class="page-title">Inspection Checklists</div><div class="page-subtitle">Pre-job and post-job checklists per trade type</div></div>
+        <button class="btn btn-pri" onclick="openAddChecklist()">+ New Checklist</button>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">Saved Checklists</div></div>
+        <div class="card-body" id="checklist-body">
+          <div style="text-align:center;padding:32px;color:var(--txt3);">
+            
+            <div style="font-size:14px;font-weight:600;margin-bottom:6px;">No checklists yet</div>
+            <div style="font-size:13px;margin-bottom:16px;">Create trade-specific checklists your crew completes on-site</div>
+            <button class="btn btn-pri" onclick="openAddChecklist()">+ Create Checklist</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS -->
+    <div class="page" id="page-documents">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div class="page-title">Documents</div><div class="page-subtitle">Store contracts, permits, insurance, and job photos</div></div>
+        <button class="btn btn-pri" onclick="toast('Document upload requires Supabase storage integration','info')">+ Upload</button>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">All Documents</div></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Name</th><th>Type</th><th>Linked Job</th><th>Uploaded</th><th>Expiry</th></tr></thead>
+          <tbody><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--txt3);">No documents uploaded yet.</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI ASSISTANT -->
+    <div class="page" id="page-ai">
+      <div class="page-header"><div class="page-title">AI Assistant</div><div class="page-subtitle">Powered by Claude AI — your smartest crew member</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="dash-grid">
+
+        <div class="ai-box">
+          <div class="ai-box-hd"><span class="ai-tool-icon">EST</span><span style="font-size:15px;font-weight:700;color:#fff;">Estimate Writer</span><span class="ai-badge">AI</span></div>
+          <p style="font-size:13px;color:rgba(255,255,255,.58);margin-bottom:11px;">Describe the job and AI writes a professional line-item estimate ready to send to the client.</p>
+          <textarea class="form-control" id="ai-est-input" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);color:#fff;margin-bottom:10px;" rows="3" placeholder="e.g. Replace hot water heater in 2-story home, customer has 50 gal tank, needs same size..."></textarea>
+          <button class="btn btn-pri" onclick="aiEstimate()" style="width:100%;justify-content:center;">Write Estimate</button>
+          <div class="ai-response" id="ai-est-result" style="margin-top:11px;display:none;"></div>
+        </div>
+
+        <div class="ai-box">
+          <div class="ai-box-hd"><span class="ai-tool-icon">MSG</span><span style="font-size:15px;font-weight:700;color:#fff;">Client Message Drafter</span><span class="ai-badge">AI</span></div>
+          <p style="font-size:13px;color:rgba(255,255,255,.58);margin-bottom:11px;">Need to follow up on a quote, reschedule, or collect an overdue invoice? AI writes the message.</p>
+          <div class="form-group" style="margin-bottom:10px;">
+            <select class="form-control" id="ai-msg-type" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);color:#fff;">
+              <option>Follow up on unpaid invoice</option>
+              <option>Follow up on unanswered estimate</option>
+              <option>Reschedule a job</option>
+              <option>Request a Google review</option>
+              <option>Send 6-month check-in</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:10px;"><input class="form-control" id="ai-msg-client" placeholder="Client name" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);color:#fff;"></div>
+          <button class="btn btn-pri" onclick="aiMessage()" style="width:100%;justify-content:center;">Draft Message</button>
+          <div class="ai-response" id="ai-msg-result" style="margin-top:11px;display:none;"></div>
+        </div>
+
+        <div class="ai-box">
+          <div class="ai-box-hd"><span class="ai-tool-icon">MAT</span><span style="font-size:15px;font-weight:700;color:#fff;">Material Cost Estimator</span><span class="ai-badge">AI</span></div>
+          <p style="font-size:13px;color:rgba(255,255,255,.58);margin-bottom:11px;">Describe the job. AI suggests typical material quantities and current cost estimates.</p>
+          <textarea class="form-control" id="ai-mat-input" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);color:#fff;margin-bottom:10px;" rows="3" placeholder="e.g. Paint interior of 1,500 sq ft home, 3 bedrooms, 2 baths, ceilings and trim included..."></textarea>
+          <button class="btn btn-pri" onclick="aiMaterials()" style="width:100%;justify-content:center;">Estimate Materials</button>
+          <div class="ai-response" id="ai-mat-result" style="margin-top:11px;display:none;"></div>
+        </div>
+
+        <div class="ai-box">
+          <div class="ai-box-hd"><span class="ai-tool-icon">RTE</span><span style="font-size:15px;font-weight:700;color:#fff;">Route Optimizer</span><span class="ai-badge">AI</span></div>
+          <p style="font-size:13px;color:rgba(255,255,255,.58);margin-bottom:11px;">Enter your jobs for today and AI suggests the most fuel-efficient order to run them.</p>
+          <textarea class="form-control" id="ai-route-input" style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);color:#fff;margin-bottom:10px;" rows="4" placeholder="Job 1: 123 Main St Dallas TX&#10;Job 2: 456 Oak Ave Irving TX&#10;Job 3: 789 Pine Rd Garland TX&#10;Starting from: 100 Home Base Rd Dallas TX"></textarea>
+          <button class="btn btn-pri" onclick="aiRoute()" style="width:100%;justify-content:center;">Optimize My Route</button>
+          <div class="ai-response" id="ai-route-result" style="margin-top:11px;display:none;"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- OVERHEAD ANALYZER -->
+    <div class="page" id="page-overhead">
+      <div class="page-header"><div class="page-title">Overhead Analyzer</div><div class="page-subtitle">Know your true cost per hour and minimum job rate</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;" class="dash-grid">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Monthly Fixed Costs</div></div>
+          <div class="card-body">
+            <div class="form-group"><label class="form-label">Truck / Vehicle Payment ($)</label><input class="form-control" type="number" id="oh-truck" placeholder="650" oninput="calcOverhead()"></div>
+            <div class="form-group"><label class="form-label">Insurance ($)</label><input class="form-control" type="number" id="oh-ins" placeholder="280" oninput="calcOverhead()"></div>
+            <div class="form-group"><label class="form-label">Fuel ($)</label><input class="form-control" type="number" id="oh-fuel" placeholder="400" oninput="calcOverhead()"></div>
+            <div class="form-group"><label class="form-label">Tools / Equipment ($)</label><input class="form-control" type="number" id="oh-tools" placeholder="150" oninput="calcOverhead()"></div>
+            <div class="form-group"><label class="form-label">Phone / Software ($)</label><input class="form-control" type="number" id="oh-phone" placeholder="100" oninput="calcOverhead()"></div>
+            <div class="form-group"><label class="form-label">Other Monthly Costs ($)</label><input class="form-control" type="number" id="oh-other" placeholder="200" oninput="calcOverhead()"></div>
+            <div class="form-group"><label class="form-label">Billable Hours Per Month</label><input class="form-control" type="number" id="oh-hours" placeholder="140" value="140" oninput="calcOverhead()"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Your Numbers</div></div>
+          <div class="card-body" id="overhead-result"><div style="text-align:center;padding:40px;color:var(--txt3);">Enter your fixed costs to see your real numbers</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOALS -->
+    <div class="page" id="page-goals">
+      <div class="page-header"><div class="page-title">Goals</div><div class="page-subtitle">Set targets and track performance</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="dash-grid">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Monthly Goals</div></div>
+          <div class="card-body">
+            <div class="form-group"><label class="form-label">Revenue Goal ($)</label><input class="form-control" type="number" id="goal-rev-input" placeholder="8000"></div>
+            <div class="form-group"><label class="form-label">Job Count Goal</label><input class="form-control" type="number" id="goal-jobs-input" placeholder="15"></div>
+            <button class="btn btn-pri" onclick="saveGoals()">Save Goals</button>
+            <div style="margin-top:22px;display:flex;flex-direction:column;gap:14px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span style="color:var(--txt2);">Revenue</span><span style="font-weight:700;" id="goals-rev-pct">0%</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="goals-rev-bar" style="width:0%"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span style="color:var(--txt2);">Jobs Completed</span><span style="font-weight:700;" id="goals-job-pct">0%</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="goals-job-bar" style="width:0%;background:var(--sage)"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Crew Leaderboard</div><span class="badge badge-orange">This Month</span></div>
+          <div class="card-body" id="leaderboard-body"><div style="text-align:center;padding:28px;color:var(--txt3);font-size:13px;">Add crew members to see leaderboard.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="page" id="page-calendar">
+      <div class="page-header"><div class="page-title">Job Calendar</div><div class="page-subtitle">All your jobs and appointments in one view</div></div>
+      <div class="card">
+        <div class="card-hd">
+          <button class="btn btn-ghost btn-sm" onclick="calPrev()">← Prev</button>
+          <div class="card-title" id="cal-title">May 2025</div>
+          <button class="btn btn-ghost btn-sm" onclick="calNext()">Next →</button>
+        </div>
+        <div id="cal-body" style="padding:0;"></div>
+      </div>
+    </div>
+
+    <!-- GPS TRACKING -->
+    <div class="page" id="page-gps">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div class="page-title">GPS Tracking</div><div class="page-subtitle">See where your crew is in real time</div></div>
+        <button class="btn btn-pri" onclick="shareMyLocation()">+ Share My Location</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;" class="dash-grid">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Live Crew Map</div><span class="badge badge-green" id="gps-status-badge">Waiting...</span></div>
+          <div id="gps-map" style="height:360px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;color:var(--txt3);">
+              <div style="font-size:32px;font-family:var(--font-display);font-weight:800;color:var(--orange);margin-bottom:10px;">GPS</div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:6px;">Map loads when crew shares location</div>
+              <div style="font-size:12px;">Crew members tap "Share My Location" to appear on the map</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Crew Locations</div></div>
+          <div class="card-body" id="gps-crew-list">
+            <div style="text-align:center;padding:28px;color:var(--txt3);font-size:13px;">No crew locations shared yet.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">How It Works</div></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:16px;text-align:center;">
+              <div style="font-size:20px;font-family:var(--font-display);font-weight:800;color:var(--orange);margin-bottom:8px;">APP</div>
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px;">1. Crew Opens App</div>
+              <div style="font-size:12px;color:var(--txt3);">Any crew member opens CSO Field on their phone</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:16px;text-align:center;">
+              <div style="font-size:20px;font-family:var(--font-display);font-weight:800;color:var(--orange);margin-bottom:8px;">PIN</div>
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px;">2. Shares Location</div>
+              <div style="font-size:12px;color:var(--txt3);">They tap "Share My Location" — browser asks for permission</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:16px;text-align:center;">
+              <div style="font-size:20px;font-family:var(--font-display);font-weight:800;color:var(--orange);margin-bottom:8px;">MAP</div>
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px;">3. Appears on Map</div>
+              <div style="font-size:12px;color:var(--txt3);">Their pin drops on your map with name and timestamp</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:16px;text-align:center;">
+              <div style="font-size:20px;font-family:var(--font-display);font-weight:800;color:var(--orange);margin-bottom:8px;">SYNC</div>
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px;">4. Auto-Updates</div>
+              <div style="font-size:12px;color:var(--txt3);">Location refreshes every 60 seconds while active</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ONLINE BOOKING -->
+    <div class="page" id="page-booking">
+      <div class="page-header">
+        <div class="page-title">Online Booking</div>
+        <div class="page-subtitle">A public booking link your clients can use to request jobs 24/7</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="dash-grid">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Your Booking Link</div></div>
+          <div class="card-body">
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:13px;color:var(--orange);font-weight:600;word-break:break-all;" id="booking-link-display">csofield.app/book/your-company</span>
+              <button class="btn btn-outline btn-sm" onclick="copyBookingLink()">Copy Link</button>
+            </div>
+            <p style="font-size:13px;color:var(--txt2);margin-bottom:20px;line-height:1.6;">Share this link on your website, social media, Google Business Profile, or via text. Clients fill out a simple form and the request drops straight into your Job Manager.</p>
+            <div class="form-group"><label class="form-label">Business Name on Booking Page</label><input class="form-control" id="bk-name" placeholder="Smith Plumbing LLC"></div>
+            <div class="form-group"><label class="form-label">Services You Offer (shown on booking form)</label>
+              <textarea class="form-control" id="bk-services" rows="3" placeholder="Plumbing repairs&#10;Water heater replacement&#10;Drain cleaning&#10;Emergency service"></textarea>
+            </div>
+            <div class="form-group"><label class="form-label">Service Area</label><input class="form-control" id="bk-area" placeholder="Dallas, Irving, Garland, Mesquite TX"></div>
+            <div class="form-group"><label class="form-label">Response Time Message</label><input class="form-control" id="bk-response" placeholder="We respond within 2 business hours"></div>
+            <button class="btn btn-pri" onclick="saveBookingSettings()">Save & Update Page</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Booking Page Preview</div><span class="badge badge-green">Live</span></div>
+          <div class="card-body" style="padding:0;">
+            <div id="booking-preview" style="background:#f8f9fa;border-radius:0 0 var(--radius-lg) var(--radius-lg);padding:24px;">
+              <div style="text-align:center;margin-bottom:20px;">
+                <div style="width:48px;height:48px;background:var(--orange);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;color:#fff;font-size:14px;margin:0 auto 10px;">CF</div>
+                <div style="font-family:var(--font-display);font-size:20px;font-weight:800;color:#1a1a1a;" id="preview-name">Your Company</div>
+                <div style="font-size:12px;color:#666;margin-top:4px;" id="preview-area">Service Area</div>
+              </div>
+              <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+                <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:10px;">Request a Service</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <input style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:100%;" placeholder="Your Name" readonly>
+                  <input style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:100%;" placeholder="Phone Number" readonly>
+                  <input style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:100%;" placeholder="Your Address" readonly>
+                  <select style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:100%;" id="preview-services">
+                    <option>Select a service...</option>
+                  </select>
+                  <textarea style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:100%;resize:none;" rows="2" placeholder="Describe the issue..." readonly></textarea>
+                  <button style="background:var(--orange);color:#fff;border:none;border-radius:6px;padding:10px;font-weight:700;font-size:14px;cursor:pointer;">Request Service</button>
+                </div>
+                <div style="text-align:center;font-size:11px;color:#999;margin-top:10px;" id="preview-response">We respond within 2 business hours</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <div class="card-hd">
+          <div class="card-title">Incoming Booking Requests</div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <span class="badge badge-orange" id="booking-count-badge">0 pending</span>
+            <button class="btn btn-outline btn-sm" onclick="simulateBookingRequest()">+ Simulate Request</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Phone</th><th>Service</th><th>Address</th><th>Message</th><th>Received</th><th>Action</th></tr></thead>
+            <tbody id="booking-requests-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--txt3);">No booking requests yet. Share your booking link to start receiving requests.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-header"><div class="page-title">Settings</div><div class="page-subtitle">Manage your profile and preferences</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="dash-grid">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Business Profile</div></div>
+          <div class="card-body">
+            <div class="form-group"><label class="form-label">Business Name</label><input class="form-control" id="set-company" placeholder="Smith Plumbing LLC"></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Trade Type</label><input class="form-control" id="set-trade" placeholder="Plumbing"></div>
+              <div class="form-group"><label class="form-label">License #</label><input class="form-control" id="set-license" placeholder="TACLB012345C"></div>
+            </div>
+            <div class="form-group"><label class="form-label">State</label><input class="form-control" id="set-state" placeholder="Texas"></div>
+            <button class="btn btn-pri" onclick="saveSettings()">Save Profile</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Rate Defaults</div></div>
+          <div class="card-body">
+            <div class="form-group"><label class="form-label">Hourly Labor Rate ($)</label><input class="form-control" type="number" id="set-rate" placeholder="75"></div>
+            <div class="form-group"><label class="form-label">Overhead %</label><input class="form-control" type="number" id="set-overhead" placeholder="15"></div>
+            <div class="form-group"><label class="form-label">Monthly Revenue Goal ($)</label><input class="form-control" type="number" id="set-goal" placeholder="8000"></div>
+            <div class="form-group"><label class="form-label">Plan</label>
+              <div style="padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-weight:600;" id="set-plan-name">Free Plan</span>
+                <button class="btn btn-pri btn-sm">Upgrade</button>
+              </div>
+            </div>
+            <button class="btn btn-outline" onclick="saveSettings()">Save Defaults</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:18px;">
+        <div class="card-hd"><div class="card-title">Danger Zone</div></div>
+        <div class="card-body" style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" onclick="exportData()">📥 Export Data (CSV)</button>
+          <button class="btn btn-danger btn-sm" onclick="if(confirm('Sign out?'))doLogout()">Sign Out</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- end #app -->
+
+<!-- ═══════════════════════ JOB MODAL ═══════════════════════ -->
+<div class="modal-overlay" id="modal-add-job">
+  <div class="modal" style="max-width:620px;">
+    <div class="modal-hd"><div class="modal-title" id="job-modal-title">Add New Job</div><button class="modal-close" onclick="closeModal('modal-add-job')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Client Name</label><input class="form-control" id="aj-client" placeholder="John Smith"></div>
+        <div class="form-group"><label class="form-label">Trade / Job Type</label>
+          <select class="form-control" id="aj-type"><option>Plumbing</option><option>Electrical</option><option>HVAC</option><option>Roofing</option><option>Painting</option><option>Carpentry</option><option>Flooring</option><option>Landscaping</option><option>Handyman</option><option>Other</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Job Address</label><input class="form-control" id="aj-address" placeholder="123 Main St, Dallas TX"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Job Value ($)</label><input class="form-control" type="number" id="aj-value" placeholder="1500"></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-control" id="aj-status"><option>Estimate</option><option>Scheduled</option><option>In Progress</option><option>Complete</option><option>Invoiced</option><option>Paid</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Scheduled Date</label><input class="form-control" type="date" id="aj-date"></div>
+        <div class="form-group"><label class="form-label">Est. Hours</label><input class="form-control" type="number" id="aj-hours" placeholder="6"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" id="aj-notes" rows="2" placeholder="Special access instructions, materials needed..."></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-job')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveJob()">Save Job</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Client Modal -->
+<div class="modal-overlay" id="modal-add-client">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">Add Client</div><button class="modal-close" onclick="closeModal('modal-add-client')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">First Name</label><input class="form-control" id="ac-fname" placeholder="John"></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input class="form-control" id="ac-lname" placeholder="Smith"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-control" type="tel" id="ac-phone" placeholder="(214) 555-1234"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" id="ac-email" placeholder="john@email.com"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Address</label><input class="form-control" id="ac-address" placeholder="123 Main St, Dallas TX"></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" id="ac-notes" rows="2" placeholder="Gate code, preferred contact time..."></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-client')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveClient()">Save Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Material Modal -->
+<div class="modal-overlay" id="modal-add-material">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">Log Material</div><button class="modal-close" onclick="closeModal('modal-add-material')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Item Name</label><input class="form-control" id="am-item" placeholder="1/2 PVC Pipe (10ft)"></div>
+        <div class="form-group"><label class="form-label">Supplier</label><input class="form-control" id="am-supplier" placeholder="Home Depot"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Quantity</label><input class="form-control" type="number" id="am-qty" placeholder="10"></div>
+        <div class="form-group"><label class="form-label">Unit Cost ($)</label><input class="form-control" type="number" id="am-cost" placeholder="4.50" step="0.01"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Linked Job (optional)</label><input class="form-control" id="am-job" placeholder="Client name or job ID"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-material')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveMaterial()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Crew Modal -->
+<div class="modal-overlay" id="modal-add-crew">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">Add Crew Member</div><button class="modal-close" onclick="closeModal('modal-add-crew')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">First Name</label><input class="form-control" id="cr-fname" placeholder="Mike"></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input class="form-control" id="cr-lname" placeholder="Johnson"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-control" type="tel" id="cr-phone" placeholder="(214) 555-0000"></div>
+        <div class="form-group"><label class="form-label">Role</label><input class="form-control" id="cr-role" placeholder="Apprentice, Helper, Sub..."></div>
+      </div>
+      <div class="form-group"><label class="form-label">Pay Type</label>
+        <select class="form-control" id="cr-pay-type"><option>Per Job</option><option>Hourly</option><option>% of Job</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Pay Rate ($ or %)</label><input class="form-control" type="number" id="cr-pay-rate" placeholder="25"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-crew')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveCrew()">Add Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Estimate Modal -->
+<div class="modal-overlay" id="modal-add-estimate">
+  <div class="modal" style="max-width:620px;">
+    <div class="modal-hd"><div class="modal-title">New Estimate</div><button class="modal-close" onclick="closeModal('modal-add-estimate')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Client Name</label><input class="form-control" id="ae-client" placeholder="John Smith"></div>
+        <div class="form-group"><label class="form-label">Job Type</label><input class="form-control" id="ae-type" placeholder="Water heater replacement"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Labor Cost ($)</label><input class="form-control" type="number" id="ae-labor" placeholder="600"></div>
+        <div class="form-group"><label class="form-label">Materials Cost ($)</label><input class="form-control" type="number" id="ae-materials" placeholder="350"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Other Costs ($)</label><input class="form-control" type="number" id="ae-other" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Valid Until</label><input class="form-control" type="date" id="ae-expiry"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Scope of Work</label><textarea class="form-control" id="ae-scope" rows="3" placeholder="Describe what's included in this estimate..."></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-estimate')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveEstimate()">Save Estimate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Checklist Modal -->
+<div class="modal-overlay" id="modal-add-checklist">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">Create Checklist</div><button class="modal-close" onclick="closeModal('modal-add-checklist')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Checklist Name</label><input class="form-control" id="cl-name" placeholder="HVAC Pre-Job Inspection"></div>
+      <div class="form-group"><label class="form-label">Trade Type</label>
+        <select class="form-control" id="cl-trade"><option>HVAC</option><option>Plumbing</option><option>Electrical</option><option>Roofing</option><option>General</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-control" id="cl-type"><option>Pre-Job</option><option>Post-Job</option><option>Safety</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Items (one per line)</label><textarea class="form-control" id="cl-items" rows="5" placeholder="Check thermostat settings&#10;Inspect air filters&#10;Test all vents&#10;Check refrigerant levels&#10;Verify electrical connections"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-checklist')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveChecklist()">Save Checklist</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- App logic loaded last so DOM is ready -->
+<script src="app.js"></script>
+</body>
+</html>
